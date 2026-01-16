@@ -63,3 +63,22 @@ func CheckScheduleByStations(c *gin.Context, service Service) {
 		Data:    datas,
 	})
 }
+
+func CheckEstimateByStations(c *gin.Context, service Service) {
+	id := c.Param("id")
+
+	datas, err := service.CheckEstimateByStations(id)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, response.APIResponse{
+			Success: false,
+			Message: err.Error(),
+			Data:    nil,
+		})
+	}
+
+	c.JSON(http.StatusOK, response.APIResponse{
+		Success: true,
+		Message: "Succes Get Estimate From Station",
+		Data:    datas,
+	})
+}

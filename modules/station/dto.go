@@ -25,3 +25,14 @@ type ScheduleResponse struct {
 func (s ScheduleResponse) Format(param1 string) {
 	panic("unimplemented")
 }
+
+type Estimate struct {
+	StationId string `json:"stasiun_nid"`
+	Fare      string `json:"tarif"`
+	Time      string `json:"waktu"`
+}
+
+type EstimateResponse struct {
+	Fare string `json:"fare"`
+	Time string `json:"waktu"`
+}

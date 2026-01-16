@@ -13,6 +13,7 @@ import (
 type Service interface {
 	GetAllStations() (response []StationResponse, err error)
 	CheckScheduleByStations(id string) (response []ScheduleResponse, err error)
+	CheckEstimateByStations(id string) (response []EstimateResponse, err error)
 }
 
 type service struct {
@@ -30,7 +31,6 @@ func NewService() Service {
 func (s *service) GetAllStations() (response []StationResponse, err error) {
 	// layer Service
 	url := "https://www.jakartamrt.co.id/id/val/stasiuns"
-	// url := "https://www.jakartamrt.co.id/"
 
 	// Hit URL
 	byteResponse, err := client.DoRequest(s.client, url)
@@ -148,5 +148,12 @@ func ConvertScheduleToTimeFormat(schedule string) (response []time.Time, err err
 		}
 		response = append(response, parsedTime)
 	}
+	return
+}
+
+func (s *service) CheckEstimateByStations(id string) (respone []EstimateResponse, err error) {
+	// Layer Service
+	// url := "https://www.jakartamrt.co.id/id/val/stasiuns"
+
 	return
 }
