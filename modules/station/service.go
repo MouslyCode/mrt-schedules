@@ -161,15 +161,27 @@ func (s *service) CheckEstimateByStations(id string) (respone []EstimateResponse
 		return
 	}
 
-	var estimate EstimateRequest
-	err = json.Unmarshal(byteResponse, &estimate)
+	var stationEstimate []Station
+	err = json.Unmarshal(byteResponse, &stationEstimate)
 
 	// Response
-	for _, item := range estimate.Estimate {
-		respone = append(respone, EstimateResponse{
-			Fare: item.Fare,
-			Time: item.Time,
-		})
+	var estimateSelected Estimate
+	for _, station := range stationEstimate {
+		for _, estimate := range station.Estimate {
+			if estimate.StationId == station.Id {
+				estimateSelected = estimate
+				respone = append(respone, EstimateResponse{
+					StationName: station.Name,
+					Fare:        estimateSelected.Fare,
+					Time:        estimateSelected.Time,
+				})
+				break
+			}
+		}
+	}
+
+	if estimateSelected.StationId == "" {
+		err = errors.New("Station not found")
 	}
 
 	return
