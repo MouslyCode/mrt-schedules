@@ -151,7 +151,7 @@ func ConvertScheduleToTimeFormat(schedule string) (response []time.Time, err err
 	return
 }
 
-func (s *service) CheckEstimateByStations(id string) (respone []StationEstimateResponse, err error) {
+func (s *service) CheckEstimateByStations(id string) (response []StationEstimateResponse, err error) {
 	// Layer Service
 	url := "https://www.jakartamrt.co.id/id/val/stasiuns"
 
@@ -161,37 +161,72 @@ func (s *service) CheckEstimateByStations(id string) (respone []StationEstimateR
 		return
 	}
 
-	var stationEstimate []StationEstimate
-	err = json.Unmarshal(byteResponse, &stationEstimate)
-
-	var stationSelected StationEstimate
-	for _, item := range stationEstimate {
-		if item.StationId == id {
-			stationSelected = item
-			break
-		}
-	}
-
-	if stationSelected.StationId == "" {
-		err = errors.New("Station Not Found")
-		return
-	}
-	// Response
-	respone, err = GetEstimateResponse(stationSelected)
+	var stations []StationEstimate
+	err = json.Unmarshal(byteResponse, &stations)
 	if err != nil {
 		return
 	}
 
+	stationNameById := make(map[string]string, len(stations))
+	for _, s := range stations {
+		stationNameById[s.StationId] = s.StationName
+	}
+
+	for _, station := range stations {
+
+		if station.StationId == id {
+			continue
+		}
+
+		var estimates []EstimateResponse
+		for _, est := range station.StationEstimate {
+			stationName := stationNameById[est.StationId]
+			estimates = append(estimates, EstimateResponse{
+				StationName: stationName,
+				Fare:        est.Fare,
+				Time:        est.Time,
+			})
+		}
+
+		response = append(response, StationEstimateResponse{
+			StationName: station.StationName,
+			Estimates:   estimates,
+		})
+
+		return
+	}
+
+	err = errors.New("Station Not Found")
+
+	// if stationSelected.StationId == "" {
+	// 	err = errors.New("Station Not Found")
+	// 	return
+	// }
+
+	// Response
+	// response, err = append(response, StationEstimateResponse{
+	// 	StationName: stationSelected.StationName,
+	// })
+	// if err != nil {
+	// 	return
+	// }
+
 	return
 }
 
-func GetEstimateResponse(station StationEstimate) (response []StationEstimateResponse, err error) {
-	for _, item := range station.StationEstimate {
-		if item.StationId == station.StationId {
-			response = append(response, StationEstimateResponse{
-				StationName: station.StationName,
-			})
-		}
-	}
-	return
-}
+// func GetEstimateResponse(station StationEstimate) (response []EstimateResponse, err error) {
+
+// 	var stations []StationEstimate
+// 	stations = append(stations, station)
+// 	for _, stationItem := range stations {
+// 		for _, item := range stationItem.StationEstimate {
+// 			if item.StationId == stationItem.StationId {
+// 				response = append(response, StationEstimateResponse{
+// 					StationName: stationItem.StationName,
+// 					Estimates:   []EstimateResponse{},
+// 				})
+// 			}
+// 		}
+// 	}
+// 	return
+// }
