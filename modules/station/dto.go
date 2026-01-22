@@ -1,10 +1,12 @@
 package station
 
 type Station struct {
-	Id              string     `json:"nid"`
-	Name            string     `json:"title"`
-	StationEstimate []Estimate `json:"estimasi"`
-	StationFacility []Facility `json:"fasilitas"`
+	Id                string     `json:"nid"`
+	Name              string     `json:"title"`
+	StationEstimate   []Estimate `json:"estimasi"`
+	StationFacility   []Facility `json:"fasilitas"`
+	StationScheduleHI string     `json:"jadwal_hi_biasa"`
+	StationScheduleLB string     `json:"jadwal_lb_biasa"`
 }
 
 type StationResponse struct {
@@ -13,19 +15,22 @@ type StationResponse struct {
 }
 
 type Schedule struct {
-	StationId          string `json:"nid"`
-	StationName        string `json:"title"`
 	ScheduleBundaranHI string `json:"jadwal_hi_biasa"`
 	ScheduleLebakBulus string `json:"jadwal_lb_biasa"`
 }
 
 type ScheduleResponse struct {
-	StationName string `json:"station"`
-	Time        string `json:"time"`
+	BundaranHIRegular []string `json:"bundaran_hi_regular"`
+	LebakBulusRegular []string `json:"lebak_bulus_regular"`
 }
 
 func (s ScheduleResponse) Format(param1 string) {
 	panic("unimplemented")
+}
+
+type StationScheduleResponse struct {
+	StationName string             `json:"station"`
+	Schedules   []ScheduleResponse `json:"schedules"`
 }
 
 type StationEstimateResponse struct {
@@ -40,7 +45,7 @@ type Estimate struct {
 }
 
 type EstimateResponse struct {
-	StationName string `json:"station"`
+	StationName string `json:"to_station"`
 	Fare        string `json:"fare"`
 	Time        string `json:"time"`
 }
@@ -60,5 +65,5 @@ type FacilityResponse struct {
 
 type StationFacilityResponse struct {
 	StationName string             `json:"station"`
-	Facilities  []FacilityResponse `json:"Facilities"`
+	Facilities  []FacilityResponse `json:"facilities"`
 }
